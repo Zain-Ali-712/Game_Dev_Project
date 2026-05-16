@@ -13,7 +13,8 @@ public class EnemyAI : MonoBehaviour
 
     public bool useAttackIndex = true;
 
-    public int damage = 1;
+    [Header("Combat Settings")]
+    public int damage = 1; // Adjust damage dealt to the player per enemy level!
 
     private Animator anim;
     private NavMeshAgent agent;
@@ -27,6 +28,8 @@ public class EnemyAI : MonoBehaviour
     {
         anim = GetComponent<Animator>();
         agent = GetComponent<NavMeshAgent>();
+        agent.enabled = true;
+
     }
 
     void Update()

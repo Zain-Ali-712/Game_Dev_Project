@@ -30,12 +30,20 @@ namespace RPGGame
             // Rotate ONLY while right click held
             if (Input.GetMouseButton(1))
             {
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+
                 currentYaw += Input.GetAxis("Mouse X") * rotationSpeed;
 
                 currentPitch -= Input.GetAxis("Mouse Y") * rotationSpeed;
 
                 // Limit vertical angle
                 currentPitch = Mathf.Clamp(currentPitch, minPitch, maxPitch);
+            }
+            else
+            {
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
             }
 
             // Smooth rotations

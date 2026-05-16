@@ -2,6 +2,9 @@ using UnityEngine;
 
 public class PlayerAttackHitbox : MonoBehaviour
 {
+    [Header("Combat Settings")]
+    public int attackDamage = 10; // 10 damage per hit. Change per level in Inspector!
+
     private void OnTriggerEnter(Collider other)
     {
         Debug.Log("COLLIDER HIT: " + other.name);
@@ -29,14 +32,14 @@ public class PlayerAttackHitbox : MonoBehaviour
 
         if (enemy1 != null && !enemy1.IsDead())
         {
-            enemy1.TakeHit(1);
-            Debug.Log("Enemy Hit!");
+            enemy1.TakeHit(attackDamage);
+            Debug.Log("Enemy Hit! Dealt " + attackDamage + " damage.");
         }
 
         if (enemy2 != null && !enemy2.IsDead())
         {
-            enemy2.TakeHit(1);
-            Debug.Log("Parasite Hit!");
+            enemy2.TakeHit(attackDamage);
+            Debug.Log("Parasite Hit! Dealt " + attackDamage + " damage.");
         }
     }
 }

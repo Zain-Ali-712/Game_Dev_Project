@@ -7,7 +7,9 @@ using UnityEngine.AI;
 
 public class ParasiteHealth : MonoBehaviour
 {
-    public int health = 2;
+    [Header("Health Settings")]
+    public int maxHealth = 30; // 3 hits to kill (if player damage is 10). Change in Inspector per level!
+    private int currentHealth;
 
     private bool isDead = false;
 
@@ -16,17 +18,18 @@ public class ParasiteHealth : MonoBehaviour
     void Start()
     {
         anim = GetComponent<Animator>();
+        currentHealth = maxHealth;
     }
 
     public void TakeHit(int damage)
     {
         if (isDead) return;
 
-        health -= damage;
+        currentHealth -= damage;
 
-        Debug.Log("Parasite Health: " + health);
+        Debug.Log("Parasite Health: " + currentHealth);
 
-        if (health <= 0)
+        if (currentHealth <= 0)
         {
             Die();
         }
