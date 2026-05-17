@@ -7,9 +7,12 @@ public class PlayerController : MonoBehaviour
     public float moveSpeed = 3f;
     public float rotationSpeed = 10f;
     public float gravity = -20f;
-
+    public Joystick joystick; 
     [Header("Attack")]
     public GameObject attackpoint;
+    public AudioSource attackAudio;
+
+    
 
     private Animator anim;
     private CharacterController controller;
@@ -21,6 +24,8 @@ public class PlayerController : MonoBehaviour
     private int attackIndex = 0;
     private float comboTimer = 0f;
     private float comboDelay = 2f;
+
+private bool attackQueued = false;
 
     void Start()
     {
@@ -34,11 +39,23 @@ public class PlayerController : MonoBehaviour
         HandleAttack();
     }
 
+    
+
     // ================= MOVEMENT =================
     void HandleMovement()
     {
         float horizontal = Input.GetAxisRaw("Horizontal");
         float vertical = Input.GetAxisRaw("Vertical");
+
+        if (joystick != null)
+{
+    if (Mathf.Abs(joystick.Horizontal) > 0.1f ||
+        Mathf.Abs(joystick.Vertical) > 0.1f)
+    {
+        horizontal = joystick.Horizontal;
+        vertical = joystick.Vertical;
+    }
+}
 
         moveDirection = new Vector3(horizontal, 0, vertical).normalized;
 
@@ -73,6 +90,11 @@ public class PlayerController : MonoBehaviour
         controller.Move(velocity * Time.deltaTime);
     }
 
+    public void OnAttackButton()
+    {
+    attackQueued = true;
+    }
+
     // ================= ATTACK =================
     void HandleAttack()
     {
@@ -82,11 +104,15 @@ public class PlayerController : MonoBehaviour
         {
             attackIndex = 0;
         }
+ bool inputAttack =
+        Input.GetKeyDown(KeyCode.Space) ||
+        attackQueued;
 
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            Attack();
-        }
+    if (inputAttack)
+    {
+        attackQueued = false; // 🔥 CONSUME IMMEDIATELY
+        Attack();
+    }
     }
 
     void Attack()
@@ -97,6 +123,8 @@ public class PlayerController : MonoBehaviour
         anim.SetTrigger("Attack");
 
         StartCoroutine(AttackRoutine());
+
+            attackAudio.Play();
 
         attackIndex++;
 

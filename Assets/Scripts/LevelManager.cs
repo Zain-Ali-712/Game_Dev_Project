@@ -33,8 +33,7 @@ public class LevelManager : MonoBehaviour
     [Tooltip("Drag your 'Game loss' file here")]
     public AudioClip GameLoss;
 
-    [Tooltip("Drag your 'Enemy attack' file here")]
-    public AudioClip EnemyAttack;
+
 
     private bool isGameOver = false;
 
@@ -97,10 +96,7 @@ public class LevelManager : MonoBehaviour
 
         UpdateHealthUI();
 
-        if (sfxSource != null && EnemyAttack != null)
-        {
-            sfxSource.PlayOneShot(EnemyAttack);
-        }
+        
 
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player != null)
