@@ -1,14 +1,16 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class FinishZone : MonoBehaviour
 {
+    // A safeguard to make sure the win sequence only fires ONCE 
+    // even if the player touches the zone multiple times
     private bool levelCompleted = false;
 
     private void OnTriggerEnter(Collider other)
     {
         if (levelCompleted) return;
 
+        // Check if the object entering the zone is labeled as the Player
         if (other.CompareTag("Player"))
         {
             levelCompleted = true;
@@ -18,25 +20,19 @@ public class FinishZone : MonoBehaviour
 
     void CompleteLevel()
     {
-        int currentIndex = SceneManager.GetActiveScene().buildIndex;
+        Debug.Log("PLAYER HIT THE FINISH LINE!");
 
-        Debug.Log("LEVEL COMPLETED");
+        // Find your LevelManager brain sitting in the scene
+        LevelManager manager = Object.FindFirstObjectByType<LevelManager>();
 
-        // LEVEL 3 = GAME OVER
-        if (currentIndex == 2)
+        if (manager != null)
         {
-            Debug.Log("GAME OVER - YOU WIN 🎉");
-
-            // Quit game (only works in build)
-#if UNITY_EDITOR
-            UnityEditor.EditorApplication.isPlaying = false;
-#else
-            Application.Quit();
-#endif
-            return;
+            // Trigger your custom 3-second splash text + summary panel sequence!
+            manager.PlayerWon();
         }
-
-        // Otherwise go to next level
-        SceneManager.LoadScene(currentIndex + 1);
+        else
+        {
+            Debug.LogError("Oops! Couldn't find the _LevelManager object in this scene. Make sure it has the LevelManager script attached!");
+        }
     }
 }

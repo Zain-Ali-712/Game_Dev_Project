@@ -1,5 +1,5 @@
 // ==========================
-// ENEMY AI (NAVMESH VERSION)
+// ENEMY AI (NAVMESH VERSION) - UI CONNECTED
 // ==========================
 
 using UnityEngine;
@@ -14,7 +14,7 @@ public class EnemyAI : MonoBehaviour
     public bool useAttackIndex = true;
 
     [Header("Combat Settings")]
-    public int damage = 1; // Adjust damage dealt to the player per enemy level!
+    public int damage = 10; // Increased base damage so your health visibly drops faster!
 
     private Animator anim;
     private NavMeshAgent agent;
@@ -29,24 +29,24 @@ public class EnemyAI : MonoBehaviour
         anim = GetComponent<Animator>();
         agent = GetComponent<NavMeshAgent>();
         agent.enabled = true;
-
     }
 
     void Update()
     {
         if (player == null) return;
 
-        PlayerHealth ph = player.GetComponent<PlayerHealth>();
+        // Find our global UI LevelManager brain sitting in the scene
+        LevelManager lm = Object.FindFirstObjectByType<LevelManager>();
 
-        if (ph != null && ph.IsDead())
+        // If the game is already over (Player Won or Player Lost), freeze this zombie!
+        if (lm != null && lm.currentHealth <= 0)
         {
             agent.isStopped = true;
             anim.SetFloat("Speed", 0f);
             return;
         }
 
-        float distance =
-            Vector3.Distance(transform.position, player.position);
+        float distance = Vector3.Distance(transform.position, player.position);
 
         if (distance > attackRange)
         {
@@ -61,9 +61,7 @@ public class EnemyAI : MonoBehaviour
     void MoveTowardsPlayer()
     {
         agent.isStopped = false;
-
         agent.SetDestination(player.position);
-
         anim.SetFloat("Speed", 1f);
     }
 
@@ -92,12 +90,13 @@ public class EnemyAI : MonoBehaviour
 
             anim.SetTrigger("Attack");
 
-            PlayerHealth ph =
-                player.GetComponent<PlayerHealth>();
+            // ROUTE DAMAGE TO YOUR LEVEL MANAGER UI SYSTEM
+            LevelManager lm = Object.FindFirstObjectByType<LevelManager>();
 
-            if (ph != null && !ph.IsDead())
+            if (lm != null && lm.currentHealth > 0)
             {
-                ph.TakeHit(damage);
+                // This forces the health value to drop on screen and checks for death!
+                lm.TakeDamage(damage);
             }
 
             if (useAttackIndex)
